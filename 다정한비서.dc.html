@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  a { color: #C9990A; text-decoration: none; }
+  a:hover { color: #A87E00; }
+  @keyframes ring-pulse {
+    0%   { transform: scale(.9);  opacity: .9; }
+    70%  { transform: scale(1.35); opacity: 0; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+  @keyframes caret-blink { 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
+  @keyframes dot-bounce { 0%,80%,100%{transform:translateY(0);opacity:.4;} 40%{transform:translateY(-4px);opacity:1;} }
+  @keyframes sheet-up { from{transform:translateY(100%);} to{transform:translateY(0);} }
+  @keyframes mark-pop { from{transform:translateY(6px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+  @keyframes mic-glow { 0%,100%{box-shadow:0 8px 22px rgba(226,178,10,.45);} 50%{box-shadow:0 8px 34px rgba(226,178,10,.75);} }
+</style>
+</helmet>
+
+<div style="min-height:100dvh;background:#e7e4dc;display:flex;align-items:center;justify-content:center;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;color:#2b2a26">
+  <div style="position:relative;width:100%;max-width:430px;height:100dvh;max-height:932px;background:#FFFDF6;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(40,36,20,.22)">
+
+    <!-- status bar -->
+    <sc-if value="{{ showStatusBar }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 26px 4px;font-size:16px;font-weight:700;color:#2b2a26">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <span style="width:20px;height:12px;border:2px solid #2b2a26;border-radius:3px;display:inline-block;position:relative"></span>
+        </span>
+      </div>
+    </sc-if>
+
+    <!-- ================= LAUNCHER (phone home screen) ================= -->
+    <sc-if value="{{ isLauncher }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#F1F1F1;position:relative">
+        <div style="flex:1;min-height:0;padding:34px 26px 0;display:flex;gap:20px">
+          <button onClick="{{ onOpenAssistant }}" style="border:none;background:transparent;padding:0;cursor:pointer;display:block">
+            <span style="width:118px;height:118px;border-radius:28px;background:#F5C518;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.1)">
+              <svg width="66" height="66" viewBox="0 0 24 24" fill="none">
+                <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" stroke="#2b2a26" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="9.4" r="4.4" fill="#2b2a26"/>
+                <path d="M7.7 9.4C7.5 6 9.4 3.6 12 3.6s4.5 2.4 4.3 5.8c0-2.2-2-3.6-4.3-3.6S7.7 7.2 7.7 9.4Z" fill="#2b2a26"/>
+                <circle cx="9.9" cy="9.4" r="1.6" fill="none" stroke="#F5C518" stroke-width="1.1"/>
+                <circle cx="14.1" cy="9.4" r="1.6" fill="none" stroke="#F5C518" stroke-width="1.1"/>
+                <line x1="11.5" y1="9.4" x2="12.5" y2="9.4" stroke="#F5C518" stroke-width="1.1"/>
+              </svg>
+            </span>
+          </button>
+          <button onClick="{{ onOpenKakao }}" style="border:none;background:transparent;padding:0;cursor:pointer;display:block">
+            <span style="width:118px;height:118px;border-radius:28px;background:#FEE500;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.1)">
+              <svg width="70" height="70" viewBox="0 0 100 100" fill="none">
+                <path d="M50 20C27.9 20 10 34.3 10 52c0 11.3 7.3 21.3 18.3 27L24 96l17.7-10.4c2.7.4 5.5.6 8.3.6 22.1 0 40-14.3 40-32S72.1 20 50 20Z" fill="#391B1B"/>
+                <text x="50" y="60" font-family="Arial,sans-serif" font-size="24" font-weight="800" fill="#FEE500" text-anchor="middle">TALK</text>
+              </svg>
+            </span>
+          </button>
+        </div>
+        <div style="flex:0 0 auto;padding:10px 22px 18px;display:flex;align-items:center;justify-content:space-around">
+          <span style="width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+          </span>
+          <span style="width:20px;height:20px;border:2.5px solid #8A8A8A;border-radius:5px"></span>
+          <svg width="24" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8A8A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ================= HOME (voice assistant) ================= -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#ffffff">
+
+        <!-- header -->
+        <div style="flex:0 0 auto;padding:22px 24px 0;display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <p style="margin:0;font-size:18px;font-weight:600;color:#9A9488;letter-spacing:-.2px">AI 튜토리얼 도우미</p>
+            <p style="margin:6px 0 0;font-size:34px;font-weight:800;letter-spacing:-.6px;color:#2b2a26">어떻게 도와드릴까요?</p>
+          </div>
+          <span style="width:52px;height:52px;flex:0 0 auto;border-radius:50%;background:#FFF3CE;display:flex;align-items:center;justify-content:center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#C9990A" stroke-width="2"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" stroke="#C9990A" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+
+        <!-- conversation -->
+        <div style="flex:1;min-height:0;overflow-y:auto;padding:16px 24px;display:flex;flex-direction:column;gap:22px">
+          <!-- user (typed) -->
+          <sc-if value="{{ showUser }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:88%">
+              <div style="background:#F5C518;border-radius:22px;border-bottom-right-radius:8px;padding:22px 24px;box-shadow:0 8px 20px rgba(226,178,10,.28)">
+                <p style="margin:0;font-size:28px;font-weight:800;line-height:1.4;letter-spacing:-.4px;color:#2b2a26;text-wrap:pretty">{{ typed }}<sc-if value="{{ caretOn }}" hint-placeholder-val="{{ true }}"><span style="display:inline-block;width:3px;height:1.1em;background:#2b2a26;margin-left:2px;vertical-align:-3px;animation:caret-blink 1s step-end infinite"></span></sc-if></p>
+              </div>
+              <sc-if value="{{ showListen }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:8px;color:#8A857B;font-size:20px;font-weight:600;padding-right:6px">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="12" rx="3" fill="#8A857B"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4" stroke="#8A857B" stroke-width="2" stroke-linecap="round"/></svg>
+                  듣고 있어요
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- assistant reply -->
+          <sc-if value="{{ showReply }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-start;max-width:82%;background:#ffffff;border:2px solid #F2E4A6;border-radius:22px;border-top-left-radius:8px;padding:22px 24px;box-shadow:0 6px 18px rgba(160,130,20,.08);animation:mark-pop .3s ease both">
+              <p style="margin:0;font-size:28px;font-weight:800;line-height:1.4;letter-spacing:-.4px;text-wrap:pretty">알겠습니다! 안내를 시작하겠습니다.<br>먼저 카카오톡으로 이동해 주세요</p>
+            </div>
+          </sc-if>
+
+          <!-- suggestion -->
+          <sc-if value="{{ showSuggestion }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:16px;padding-bottom:6px">
+              <p style="margin:0;font-size:19px;font-weight:600;color:#9A9488">이런 것들을 물어볼 수 있어요</p>
+              <button onClick="{{ onMic }}" style="border:none;background:#FDF3D2;border-radius:20px;padding:18px 26px;cursor:pointer;max-width:82%">
+                <p style="margin:0;font-size:23px;font-weight:800;line-height:1.5;letter-spacing:-.3px;color:#2b2a26;text-align:center">손주한테 카톡으로 사진<br>보내려면 어떻게 해</p>
+              </button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- mic footer -->
+        <div style="flex:0 0 auto;padding:10px 24px 34px;display:flex;flex-direction:column;align-items:center;gap:16px">
+          <button onClick="{{ onMic }}" style="width:104px;height:104px;border:none;border-radius:50%;background:#F3A73E;display:flex;align-items:center;justify-content:center;cursor:pointer;animation:mic-glow 2.4s ease-in-out infinite" aria-label="말하기 버튼">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><rect x="9" y="2" width="6" height="12" rx="3" fill="#ffffff"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <p style="margin:0;font-size:20px;font-weight:700;color:#9A9488;letter-spacing:-.3px">아래 버튼을 누르고 말씀해 주세요</p>
+        </div>
+        <div style="flex:0 0 auto;padding:10px 22px 18px;display:flex;align-items:center;justify-content:space-around">
+          <span style="width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+          </span>
+          <span style="width:20px;height:20px;border:2.5px solid #8A8A8A;border-radius:5px"></span>
+          <button onClick="{{ onReset }}" style="border:none;background:transparent;padding:0;cursor:pointer;display:flex" aria-label="뒤로가기 (앱 나가기)">
+            <svg width="24" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8A8A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ================= COACH (guided on KakaoTalk) ================= -->
+    <sc-if value="{{ isCoach }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;position:relative">
+
+        <!-- top bar -->
+        <div style="flex:0 0 auto;background:#ffffff;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ECECEC;position:relative;z-index:5">
+          <span style="font-size:23px;font-weight:800;letter-spacing:-.3px">사랑하는내강아지</span>
+          <span style="margin-left:auto;display:flex;align-items:center;gap:16px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#4A4A4A" stroke-width="2"/><path d="M20 20l-4.3-4.3" stroke="#4A4A4A" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="#4A4A4A" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+
+        <!-- progress badge -->
+        <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;right:16px;top:64px;z-index:6;display:flex;align-items:center;gap:8px;background:#ffffff;padding:9px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.14)">
+            <span style="display:flex;align-items:center;gap:4px">
+              <sc-for list="{{ progressDots }}" as="dot" hint-placeholder-count="4">
+                <span style="width:7px;height:7px;border-radius:50%;background:{{ dot }};display:inline-block"></span>
+              </sc-for>
+            </span>
+            <span style="font-size:15px;font-weight:800;color:#8A857B;white-space:nowrap">{{ progressText }}</span>
+          </div>
+        </sc-if>
+
+        <!-- chat -->
+        <div style="flex:1;min-height:0;overflow-y:auto;background:#ABC0D1;padding:20px 18px;display:flex;flex-direction:column;gap:10px">
+
+          <div style="align-self:center;background:rgba(0,0,0,.08);color:#5B6B75;font-size:14px;font-weight:600;padding:6px 14px;border-radius:999px;margin:4px 0">2026년 7월 1일 수요일</div>
+
+          <div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;max-width:86%">
+            <span style="width:38px;height:38px;border-radius:50%;background:#E4C99B;flex:0 0 auto"></span>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <span style="font-size:14px;color:#5B6B75;font-weight:600;padding-left:2px">사랑하는내강아지</span>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">할머니! 저 회사 합격했어요!</p>
+              </div>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">00기업이라는 곳이에요 할머니 아시나요?</p>
+              </div>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">곧 선물 사들고 찾아뵐게요!!</p>
+              </div>
+              <span style="font-size:13px;color:#8791A0;font-weight:600;padding-left:2px">오후 4:07</span>
+            </div>
+          </div>
+
+          <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:5px;max-width:70%">
+            <div style="background:#F5C518;border-radius:18px;border-bottom-right-radius:6px;padding:12px 16px">
+              <p style="margin:0;font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.2px;color:#2b2a26">그래. 수고했다 내강아지</p>
+            </div>
+            <span style="font-size:13px;color:#8791A0;font-weight:600">오후 5:08</span>
+          </div>
+          <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:5px;max-width:70%">
+            <div style="background:#F5C518;border-radius:18px;border-bottom-right-radius:6px;padding:12px 16px">
+              <p style="margin:0;font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.2px;color:#2b2a26">다음에도 연락다오^^</p>
+            </div>
+            <span style="font-size:13px;color:#8791A0;font-weight:600">오후 5:11</span>
+          </div>
+
+          <div style="align-self:center;background:rgba(0,0,0,.08);color:#5B6B75;font-size:14px;font-weight:600;padding:6px 14px;border-radius:999px;margin:10px 0 4px">2026년 7월 19일 일요일</div>
+
+          <div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;max-width:86%">
+            <span style="width:38px;height:38px;border-radius:50%;background:#E4C99B;flex:0 0 auto"></span>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <span style="font-size:14px;color:#5B6B75;font-weight:600;padding-left:2px">사랑하는내강아지</span>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">할머니~ 보고싶어요</p>
+              </div>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">요즘 뭐 하고 지내세요?</p>
+              </div>
+              <span style="font-size:13px;color:#8791A0;font-weight:600;padding-left:2px">오후 2:09</span>
+            </div>
+          </div>
+
+          <!-- sent photo (step 5) -->
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:70%">
+              <div style="width:190px;height:150px;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.18);background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyMDAgMjAwJz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0nc2t5JyB4MT0nMCcgeTE9JzAnIHgyPScwJyB5Mj0nMSc+CjxzdG9wIG9mZnNldD0nMCUnIHN0b3AtY29sb3I9JyM4RkNCRUEnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyNEQ0VGRDgnLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgZmlsbD0ndXJsKCNza3kpJy8+CjxjaXJjbGUgY3g9JzE1MCcgY3k9JzQ1JyByPSczMCcgZmlsbD0nIzZGQUU1NScgb3BhY2l0eT0nMC41Jy8+CjxjaXJjbGUgY3g9JzE3NicgY3k9JzgwJyByPScyMicgZmlsbD0nIzVDOUE0OCcgb3BhY2l0eT0nMC40Jy8+CjxwYXRoIGQ9J00wIDE3OCBRNDAgMTU4IDkwIDE3NiBRMTQwIDE5NCAyMDAgMTcyIEwyMDAgMjAwIEwwIDIwMCBaJyBmaWxsPScjNkZBRTU1JyBvcGFjaXR5PScwLjUnLz4KPCEtLSBncmFuZG1hOiBib2R5IC0tPgo8cGF0aCBkPSdNMjAgMjAwIFEyMCAxNTAgNjUgMTUwIFExMTAgMTUwIDExMCAyMDAgWicgZmlsbD0nI0VFRENDNCcvPgo8IS0tIG5lY2sgLS0+CjxyZWN0IHg9JzU1JyB5PScxMTgnIHdpZHRoPScyMCcgaGVpZ2h0PScyMicgcng9JzYnIGZpbGw9JyNGM0QzQjAnLz4KPCEtLSBoZWFkIC0tPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzkwJyByPSczOCcgZmlsbD0nI0YzRDNCMCcvPgo8IS0tIGdyYXkgaGFpciBidW4vdG9wIC0tPgo8cGF0aCBkPSdNMjcgOTAgUTIyIDQwIDY1IDM4IFExMDggNDAgMTAzIDkwIFExMDMgNjIgNjUgNTggUTI3IDYyIDI3IDkwWicgZmlsbD0nI0Q5RDZEMicvPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzM0JyByPScxMycgZmlsbD0nI0Q5RDZEMicvPgo8IS0tIGdsYXNzZXMgLS0+CjxjaXJjbGUgY3g9JzUzJyBjeT0nOTAnIHI9JzEwJyBmaWxsPSdub25lJyBzdHJva2U9JyM1QzU2NTAnIHN0cm9rZS13aWR0aD0nMi40Jy8+CjxjaXJjbGUgY3g9Jzc5JyBjeT0nOTAnIHI9JzEwJyBmaWxsPSdub25lJyBzdHJva2U9JyM1QzU2NTAnIHN0cm9rZS13aWR0aD0nMi40Jy8+CjxsaW5lIHgxPSc2MycgeTE9JzkwJyB4Mj0nNjknIHkyPSc5MCcgc3Ryb2tlPScjNUM1NjUwJyBzdHJva2Utd2lkdGg9JzIuNCcvPgo8IS0tIHNtaWxlIC0tPgo8cGF0aCBkPSdNNTIgMTA2IFE2NSAxMTggNzggMTA2JyBzdHJva2U9JyNCNTc1NEEnIHN0cm9rZS13aWR0aD0nMi42JyBmaWxsPSdub25lJyBzdHJva2UtbGluZWNhcD0ncm91bmQnLz4KPCEtLSBibHVzaCAtLT4KPGNpcmNsZSBjeD0nNDInIGN5PScxMDAnIHI9JzUnIGZpbGw9JyNGMEFDOEYnIG9wYWNpdHk9JzAuNScvPgo8Y2lyY2xlIGN4PSc5MCcgY3k9JzEwMCcgcj0nNScgZmlsbD0nI0YwQUM4Ricgb3BhY2l0eT0nMC41Jy8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0MC4wLDE1MC4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYwLjcsMTM4LjUpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTkuMywxNDAuOCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MS41LDE2Ni4xKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIzLjksMTYzLjgpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDIuMywxMjcuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMy4xLDE3My4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTY1LjMsMTU5LjIpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTIuNCwxNTQuNikiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0Ni45LDE0Ny43KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPC9zdmc+');background-size:cover;background-position:center"></div>
+              <span style="font-size:15px;color:#5B6B75;font-weight:600">오후 2:15 · 전송됨</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- ===== bottom overlays / input ===== -->
+
+        <!-- coachmark: step 1 (plus) -->
+        <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:16px;bottom:96px;z-index:30;animation:mark-pop .3s ease both">
+            <div style="background:#F5C518;color:#2b2a26;padding:14px 20px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);letter-spacing:-.3px">
+              <p style="margin:0;font-size:22px;font-weight:800;line-height:1.35">+모양 버튼을 눌러보세요</p>
+              <p style="margin:4px 0 0;font-size:17px;font-weight:600;color:#6E5A05">채팅창 왼쪽 아래에 있어요</p>
+              <span style="position:absolute;left:34px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- coachmark: step 5 (done) -->
+        <sc-if value="{{ s5 }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:26px;z-index:30;display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 20px;animation:mark-pop .3s ease both">
+            <div style="background:#2b2a26;color:#fff;font-size:23px;font-weight:800;padding:16px 24px;border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.28);text-align:center;letter-spacing:-.3px">잘하셨어요! 사진을 보냈어요</div>
+            <button onClick="{{ onReset }}" style="border:none;background:#F5C518;color:#2b2a26;font-size:20px;font-weight:800;padding:14px 28px;border-radius:14px;cursor:pointer;box-shadow:0 6px 16px rgba(226,178,10,.35)">처음으로 돌아가기</button>
+          </div>
+        </sc-if>
+
+        <!-- input bar (steps 1 & 5) -->
+        <div style="position:relative;flex:0 0 auto;background:#ffffff;border-top:1px solid #ECECEC;padding:14px 16px 22px;display:flex;align-items:center;gap:12px">
+          <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+            <span style="position:absolute;left:16px;top:14px;width:52px;height:52px;border-radius:50%;box-shadow:0 0 0 2000px rgba(0,0,0,.6);pointer-events:none;z-index:24;display:block"></span>
+          </sc-if>
+          <button onClick="{{ onPlus }}" style="position:relative;z-index:25;width:52px;height:52px;flex:0 0 auto;border:none;border-radius:50%;background:#F2F2F2;display:flex;align-items:center;justify-content:center;cursor:pointer" aria-label="첨부">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#555" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+              <span style="position:absolute;inset:-9px;border:4px solid #FF3B30;border-radius:50%;pointer-events:none;box-shadow:0 0 16px 4px rgba(255,59,48,.65)"></span>
+              <span style="position:absolute;inset:-9px;border:4px solid #FF3B30;border-radius:50%;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+            </sc-if>
+          </button>
+          <div style="flex:1;height:52px;border-radius:26px;background:#F2F2F2;display:flex;align-items:center;padding:0 20px;color:#9A9A9A;font-size:21px;font-weight:500">메시지 입력</div>
+          <span style="width:44px;height:44px;flex:0 0 auto;border-radius:50%;background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9A9A9A" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="#9A9A9A"/><circle cx="15" cy="10" r="1.3" fill="#9A9A9A"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+        <div style="flex:0 0 auto;padding:10px 22px 18px;display:flex;align-items:center;justify-content:space-around">
+          <span style="width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+          </span>
+          <span style="width:20px;height:20px;border:2.5px solid #8A8A8A;border-radius:5px"></span>
+          <button onClick="{{ onReset }}" style="border:none;background:transparent;padding:0;cursor:pointer;display:flex" aria-label="뒤로가기 (앱 나가기)">
+            <svg width="24" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8A8A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- attach sheet: step 2 -->
+        <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#ffffff;border-top-left-radius:24px;border-top-right-radius:24px;box-shadow:0 -12px 30px rgba(0,0,0,.18);padding:22px 20px 34px;animation:sheet-up .32s cubic-bezier(.2,.9,.3,1) both">
+            <div style="width:44px;height:5px;border-radius:3px;background:#E5E5E5;margin:0 auto 20px"></div>
+            <div style="position:absolute;left:0;right:0;top:-70px;display:flex;justify-content:center;animation:mark-pop .3s ease both">
+              <div style="background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);position:relative">앨범을 눌러주세요
+                <span style="position:absolute;left:50%;margin-left:-9px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:space-around">
+              <button onClick="{{ onAlbum }}" style="position:relative;flex:1;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;padding:8px">
+                <span style="position:relative;width:72px;height:72px;border-radius:20px;background:#FFF6D6;display:flex;align-items:center;justify-content:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#E2B20A" stroke-width="2"/><circle cx="8.5" cy="10" r="1.8" fill="#E2B20A"/><path d="M4 17l5-5 4 4 3-2 4 4" stroke="#E2B20A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span style="position:absolute;inset:-7px;border:3px solid #FF3B30;border-radius:24px;pointer-events:none"></span>
+                  <span style="position:absolute;inset:-7px;border:3px solid #FF3B30;border-radius:24px;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+                </span>
+                <span style="font-size:20px;font-weight:700;color:#2b2a26">앨범</span>
+              </button>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px;opacity:.45">
+                <span style="width:72px;height:72px;border-radius:20px;background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="12" rx="3" stroke="#888" stroke-width="2"/><path d="M8 7l1.5-2.5h5L16 7" stroke="#888" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3" stroke="#888" stroke-width="2"/></svg>
+                </span>
+                <span style="font-size:20px;font-weight:700;color:#888">카메라</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px;opacity:.45">
+                <span style="width:72px;height:72px;border-radius:20px;background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M6 3h8l4 4v14H6z" stroke="#888" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="#888" stroke-width="2" stroke-linejoin="round"/></svg>
+                </span>
+                <span style="font-size:20px;font-weight:700;color:#888">파일</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- photo picker: step 3 -->
+        <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;top:0;z-index:20;background:#ffffff;display:flex;flex-direction:column;animation:sheet-up .32s cubic-bezier(.2,.9,.3,1) both">
+            <div style="flex:0 0 auto;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #EEE">
+              <button onClick="{{ onReset }}" style="border:none;background:transparent;padding:4px;cursor:pointer;display:flex" aria-label="닫기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#2b2a26" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </button>
+              <span style="font-size:22px;font-weight:800">최근 사진</span>
+            </div>
+            <div style="flex:0 0 auto;padding:16px 20px 0;display:flex;justify-content:center">
+              <div style="background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);position:relative;animation:mark-pop .3s ease both">보내고 싶은 사진을 눌러주세요
+                <span style="position:absolute;left:38px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+              </div>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:20px;display:flex;flex-wrap:wrap;gap:14px">
+              <span style="width:84px;height:84px;flex:0 0 auto;border-radius:12px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyMDAgMjAwJz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0nbGVhZmJnJyB4MT0nMCcgeTE9JzAnIHgyPScxJyB5Mj0nMSc+CjxzdG9wIG9mZnNldD0nMCUnIHN0b3AtY29sb3I9JyNFQUYzRTEnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyNDREU0QzInLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgZmlsbD0ndXJsKCNsZWFmYmcpJy8+CjxwYXRoIGQ9J00tMTAgNDAgUTQwIDEwIDkwIDMwIFE0MCAyMCAxMCA3MFonIGZpbGw9JyM2RkFFNTUnIG9wYWNpdHk9JzAuNScvPgo8cGF0aCBkPSdNMjEwIDYwIFExNjAgMjAgMTIwIDUwIFExNzAgNDAgMTkwIDkwWicgZmlsbD0nIzVDOUE0OCcgb3BhY2l0eT0nMC40NScvPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3MC4wLDkwLjApIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMTAuNSIgY3k9IjAiIHJ4PSIxMC41IiByeT0iNi41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iI0M5RTRGNSIvPgogICAgICAgICAgPGNpcmNsZSByPSIzLjQiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDk3LjAsNzUuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItMTAuNSIgcng9IjYuNSIgcnk9IjEwLjUiIGZpbGw9IiM4RkJFRTYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIxMC41IiBjeT0iMCIgcng9IjEwLjUiIHJ5PSI2LjUiIGZpbGw9IiM4RkJFRTYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMTAuNSIgcng9IjYuNSIgcnk9IjEwLjUiIGZpbGw9IiM4RkJFRTYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItMTAuNSIgY3k9IjAiIHJ4PSIxMC41IiByeT0iNi41IiBmaWxsPSIjOEZCRUU2Ii8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjMuNCIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDMuMCw3OC4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii0xMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iIzVGOTdEMiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iIzVGOTdEMiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSIxMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iIzVGOTdEMiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii0xMC41IiBjeT0iMCIgcng9IjEwLjUiIHJ5PSI2LjUiIGZpbGw9IiM1Rjk3RDIiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMy40IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg4NS4wLDExMS4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii0xMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iI0M5RTRGNSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iI0M5RTRGNSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSIxMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iI0M5RTRGNSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii0xMC41IiBjeT0iMCIgcng9IjEwLjUiIHJ5PSI2LjUiIGZpbGw9IiNDOUU0RjUiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMy40IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0OS4wLDEwOC4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii0xMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iIzhGQkVFNiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iIzhGQkVFNiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSIxMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iIzhGQkVFNiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii0xMC41IiBjeT0iMCIgcng9IjEwLjUiIHJ5PSI2LjUiIGZpbGw9IiM4RkJFRTYiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMy40IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3My4wLDYwLjApIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjNUY5N0QyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMTAuNSIgY3k9IjAiIHJ4PSIxMC41IiByeT0iNi41IiBmaWxsPSIjNUY5N0QyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjNUY5N0QyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iIzVGOTdEMiIvPgogICAgICAgICAgPGNpcmNsZSByPSIzLjQiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYxLjAsMTIwLjApIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMTAuNSIgY3k9IjAiIHJ4PSIxMC41IiByeT0iNi41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iI0M5RTRGNSIvPgogICAgICAgICAgPGNpcmNsZSByPSIzLjQiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMy4wLDEwMi4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii0xMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iIzhGQkVFNiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iIzhGQkVFNiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSIxMC41IiByeD0iNi41IiByeT0iMTAuNSIgZmlsbD0iIzhGQkVFNiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii0xMC41IiBjeT0iMCIgcng9IjEwLjUiIHJ5PSI2LjUiIGZpbGw9IiM4RkJFRTYiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMy40IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzNC4wLDk2LjApIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjNUY5N0QyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMTAuNSIgY3k9IjAiIHJ4PSIxMC41IiByeT0iNi41IiBmaWxsPSIjNUY5N0QyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjEwLjUiIHJ4PSI2LjUiIHJ5PSIxMC41IiBmaWxsPSIjNUY5N0QyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTEwLjUiIGN5PSIwIiByeD0iMTAuNSIgcnk9IjYuNSIgZmlsbD0iIzVGOTdEMiIvPgogICAgICAgICAgPGNpcmNsZSByPSIzLjQiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDc5LjAsODcuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItMTAuNSIgcng9IjYuNSIgcnk9IjEwLjUiIGZpbGw9IiNDOUU0RjUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIxMC41IiBjeT0iMCIgcng9IjEwLjUiIHJ5PSI2LjUiIGZpbGw9IiNDOUU0RjUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMTAuNSIgcng9IjYuNSIgcnk9IjEwLjUiIGZpbGw9IiNDOUU0RjUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItMTAuNSIgY3k9IjAiIHJ4PSIxMC41IiByeT0iNi41IiBmaWxsPSIjQzlFNEY1Ii8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjMuNCIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDAuMCwxMjAuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOS4xIiByeD0iNS42IiByeT0iOS4xIiBmaWxsPSIjQkJEOEVGIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iI0JCRDhFRiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI5LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiNCQkQ4RUYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iI0JCRDhFRiIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjkiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE2My40LDEwNy4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii05LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiM4M0I0RTIiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI5LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjODNCNEUyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjkuMSIgcng9IjUuNiIgcnk9IjkuMSIgZmlsbD0iIzgzQjRFMiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii05LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjODNCNEUyIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuOSIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTE2LjYsMTA5LjYpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTkuMSIgcng9IjUuNiIgcnk9IjkuMSIgZmlsbD0iIzVDOTNDRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjkuMSIgY3k9IjAiIHJ4PSI5LjEiIHJ5PSI1LjYiIGZpbGw9IiM1QzkzQ0UiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOS4xIiByeD0iNS42IiByeT0iOS4xIiBmaWxsPSIjNUM5M0NFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTkuMSIgY3k9IjAiIHJ4PSI5LjEiIHJ5PSI1LjYiIGZpbGw9IiM1QzkzQ0UiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi45IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTMuMCwxMzguMikiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOS4xIiByeD0iNS42IiByeT0iOS4xIiBmaWxsPSIjQkJEOEVGIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iI0JCRDhFRiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI5LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiNCQkQ4RUYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iI0JCRDhFRiIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjkiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyMS44LDEzNS42KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii05LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiM4M0I0RTIiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI5LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjODNCNEUyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjkuMSIgcng9IjUuNiIgcnk9IjkuMSIgZmlsbD0iIzgzQjRFMiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii05LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjODNCNEUyIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuOSIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTQyLjYsOTQuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOS4xIiByeD0iNS42IiByeT0iOS4xIiBmaWxsPSIjNUM5M0NFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iIzVDOTNDRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI5LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiM1QzkzQ0UiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iIzVDOTNDRSIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjkiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMi4yLDE0Ni4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii05LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiNCQkQ4RUYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI5LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjQkJEOEVGIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjkuMSIgcng9IjUuNiIgcnk9IjkuMSIgZmlsbD0iI0JCRDhFRiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii05LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjQkJEOEVGIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuOSIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTY4LjYsMTMwLjQpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTkuMSIgcng9IjUuNiIgcnk9IjkuMSIgZmlsbD0iIzgzQjRFMiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjkuMSIgY3k9IjAiIHJ4PSI5LjEiIHJ5PSI1LjYiIGZpbGw9IiM4M0I0RTIiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOS4xIiByeD0iNS42IiByeT0iOS4xIiBmaWxsPSIjODNCNEUyIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTkuMSIgY3k9IjAiIHJ4PSI5LjEiIHJ5PSI1LjYiIGZpbGw9IiM4M0I0RTIiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi45IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDguOCwxMjUuMikiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOS4xIiByeD0iNS42IiByeT0iOS4xIiBmaWxsPSIjNUM5M0NFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iIzVDOTNDRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI5LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiM1QzkzQ0UiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOS4xIiBjeT0iMCIgcng9IjkuMSIgcnk9IjUuNiIgZmlsbD0iIzVDOTNDRSIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjkiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0Ny44LDExNy40KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii05LjEiIHJ4PSI1LjYiIHJ5PSI5LjEiIGZpbGw9IiNCQkQ4RUYiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI5LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjQkJEOEVGIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjkuMSIgcng9IjUuNiIgcnk9IjkuMSIgZmlsbD0iI0JCRDhFRiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii05LjEiIGN5PSIwIiByeD0iOS4xIiByeT0iNS42IiBmaWxsPSIjQkJEOEVGIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuOSIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDUuMCwxNjUuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC40IiByeD0iNS4yIiByeT0iOC40IiBmaWxsPSIjRDNFOUY3Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iI0QzRTlGNyIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiNEM0U5RjciLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iI0QzRTlGNyIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjciIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyNi42LDE1My4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiM5QkM2RUEiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjOUJDNkVBIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguNCIgcng9IjUuMiIgcnk9IjguNCIgZmlsbD0iIzlCQzZFQSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjOUJDNkVBIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNyIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODMuNCwxNTUuNCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC40IiByeD0iNS4yIiByeT0iOC40IiBmaWxsPSIjNkRBNERCIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iIzZEQTREQiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiM2REE0REIiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iIzZEQTREQiIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjciIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExNy4wLDE4MS44KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiNEM0U5RjciLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjRDNFOUY3Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguNCIgcng9IjUuMiIgcnk9IjguNCIgZmlsbD0iI0QzRTlGNyIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjRDNFOUY3Ii8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNyIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODguMiwxNzkuNCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC40IiByeD0iNS4yIiByeT0iOC40IiBmaWxsPSIjOUJDNkVBIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iIzlCQzZFQSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiM5QkM2RUEiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iIzlCQzZFQSIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjciIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwNy40LDE0MS4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiM2REE0REIiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjNkRBNERCIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguNCIgcng9IjUuMiIgcnk9IjguNCIgZmlsbD0iIzZEQTREQiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjNkRBNERCIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNyIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTcuOCwxODkuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC40IiByeD0iNS4yIiByeT0iOC40IiBmaWxsPSIjRDNFOUY3Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iI0QzRTlGNyIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiNEM0U5RjciLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iI0QzRTlGNyIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjciIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMS40LDE3NC42KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiM5QkM2RUEiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjOUJDNkVBIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguNCIgcng9IjUuMiIgcnk9IjguNCIgZmlsbD0iIzlCQzZFQSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjOUJDNkVBIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNyIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzYuMiwxNjkuOCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC40IiByeD0iNS4yIiByeT0iOC40IiBmaWxsPSIjNkRBNERCIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iIzZEQTREQiIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiM2REE0REIiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC40IiBjeT0iMCIgcng9IjguNCIgcnk9IjUuMiIgZmlsbD0iIzZEQTREQiIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjciIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExMi4yLDE2Mi42KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjQiIHJ4PSI1LjIiIHJ5PSI4LjQiIGZpbGw9IiNEM0U5RjciLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjRDNFOUY3Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguNCIgcng9IjUuMiIgcnk9IjguNCIgZmlsbD0iI0QzRTlGNyIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjQiIGN5PSIwIiByeD0iOC40IiByeT0iNS4yIiBmaWxsPSIjRDNFOUY3Ii8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNyIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPC9zdmc+');background-size:cover;background-position:center;display:block"></span>
+              <span style="width:84px;height:84px;flex:0 0 auto;border-radius:12px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyMDAgMjAwJz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0nc2t5Z3JhZCcgeDE9JzAnIHkxPScwJyB4Mj0nMCcgeTI9JzEnPgo8c3RvcCBvZmZzZXQ9JzAlJyBzdG9wLWNvbG9yPScjNUZBOUU4Jy8+PHN0b3Agb2Zmc2V0PSc2MCUnIHN0b3AtY29sb3I9JyM5QkNCRUUnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyNEOUVFRTAnLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgZmlsbD0ndXJsKCNza3lncmFkKScvPgo8cGF0aCBkPSdNMCAxNjAgUTEwIDEwMCAzMCAxMjAgUTQwIDcwIDU1IDExMCBRNjUgNjAgNzggMTE1IEw3OCAyMDAgTDAgMjAwWicgZmlsbD0nIzNGN0EzQicvPgo8cGF0aCBkPSdNMTIwIDIwMCBRMTMwIDEzMCAxNDggMTUwIFExNTggOTAgMTcyIDE0MCBRMTgyIDEwMCAxOTYgMTUwIEwyMDAgMjAwWicgZmlsbD0nIzJGNkIzMycvPgo8cGF0aCBkPSdNNjAgMjAwIFE3NSAxNTAgOTUgMTY1IFExMDggMTIwIDEyMiAxNjggTDEzMCAyMDBaJyBmaWxsPScjNEM4QTQ0Jy8+Cjwvc3ZnPg==');background-size:cover;background-position:center;display:block"></span>
+              <button onClick="{{ onPhoto }}" style="position:relative;width:84px;height:84px;flex:0 0 auto;border:none;border-radius:12px;overflow:hidden;cursor:pointer;padding:0;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyMDAgMjAwJz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0nc2t5JyB4MT0nMCcgeTE9JzAnIHgyPScwJyB5Mj0nMSc+CjxzdG9wIG9mZnNldD0nMCUnIHN0b3AtY29sb3I9JyM4RkNCRUEnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyNEQ0VGRDgnLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgZmlsbD0ndXJsKCNza3kpJy8+CjxjaXJjbGUgY3g9JzE1MCcgY3k9JzQ1JyByPSczMCcgZmlsbD0nIzZGQUU1NScgb3BhY2l0eT0nMC41Jy8+CjxjaXJjbGUgY3g9JzE3NicgY3k9JzgwJyByPScyMicgZmlsbD0nIzVDOUE0OCcgb3BhY2l0eT0nMC40Jy8+CjxwYXRoIGQ9J00wIDE3OCBRNDAgMTU4IDkwIDE3NiBRMTQwIDE5NCAyMDAgMTcyIEwyMDAgMjAwIEwwIDIwMCBaJyBmaWxsPScjNkZBRTU1JyBvcGFjaXR5PScwLjUnLz4KPCEtLSBncmFuZG1hOiBib2R5IC0tPgo8cGF0aCBkPSdNMjAgMjAwIFEyMCAxNTAgNjUgMTUwIFExMTAgMTUwIDExMCAyMDAgWicgZmlsbD0nI0VFRENDNCcvPgo8IS0tIG5lY2sgLS0+CjxyZWN0IHg9JzU1JyB5PScxMTgnIHdpZHRoPScyMCcgaGVpZ2h0PScyMicgcng9JzYnIGZpbGw9JyNGM0QzQjAnLz4KPCEtLSBoZWFkIC0tPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzkwJyByPSczOCcgZmlsbD0nI0YzRDNCMCcvPgo8IS0tIGdyYXkgaGFpciBidW4vdG9wIC0tPgo8cGF0aCBkPSdNMjcgOTAgUTIyIDQwIDY1IDM4IFExMDggNDAgMTAzIDkwIFExMDMgNjIgNjUgNTggUTI3IDYyIDI3IDkwWicgZmlsbD0nI0Q5RDZEMicvPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzM0JyByPScxMycgZmlsbD0nI0Q5RDZEMicvPgo8IS0tIGdsYXNzZXMgLS0+CjxjaXJjbGUgY3g9JzUzJyBjeT0nOTAnIHI9JzEwJyBmaWxsPSdub25lJyBzdHJva2U9JyM1QzU2NTAnIHN0cm9rZS13aWR0aD0nMi40Jy8+CjxjaXJjbGUgY3g9Jzc5JyBjeT0nOTAnIHI9JzEwJyBmaWxsPSdub25lJyBzdHJva2U9JyM1QzU2NTAnIHN0cm9rZS13aWR0aD0nMi40Jy8+CjxsaW5lIHgxPSc2MycgeTE9JzkwJyB4Mj0nNjknIHkyPSc5MCcgc3Ryb2tlPScjNUM1NjUwJyBzdHJva2Utd2lkdGg9JzIuNCcvPgo8IS0tIHNtaWxlIC0tPgo8cGF0aCBkPSdNNTIgMTA2IFE2NSAxMTggNzggMTA2JyBzdHJva2U9JyNCNTc1NEEnIHN0cm9rZS13aWR0aD0nMi42JyBmaWxsPSdub25lJyBzdHJva2UtbGluZWNhcD0ncm91bmQnLz4KPCEtLSBibHVzaCAtLT4KPGNpcmNsZSBjeD0nNDInIGN5PScxMDAnIHI9JzUnIGZpbGw9JyNGMEFDOEYnIG9wYWNpdHk9JzAuNScvPgo8Y2lyY2xlIGN4PSc5MCcgY3k9JzEwMCcgcj0nNScgZmlsbD0nI0YwQUM4Ricgb3BhY2l0eT0nMC41Jy8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0MC4wLDE1MC4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYwLjcsMTM4LjUpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTkuMywxNDAuOCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MS41LDE2Ni4xKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIzLjksMTYzLjgpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDIuMywxMjcuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMy4xLDE3My4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTY1LjMsMTU5LjIpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTIuNCwxNTQuNikiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0Ni45LDE0Ny43KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPC9zdmc+');background-size:cover;background-position:center">
+                <span style="position:absolute;inset:-4px;border:3px solid #FF3B30;border-radius:14px;pointer-events:none"></span>
+                <span style="position:absolute;inset:-4px;border:3px solid #FF3B30;border-radius:14px;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+              </button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- send preview: step 4 -->
+        <sc-if value="{{ showPreview }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#ffffff;border-top:1px solid #ECECEC;padding:18px 18px 24px;box-shadow:0 -10px 26px rgba(0,0,0,.12);animation:sheet-up .3s ease both">
+            <div style="position:absolute;left:0;right:0;top:-70px;display:flex;justify-content:center;animation:mark-pop .3s ease both">
+              <div style="background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);position:relative">노란 버튼을 눌러 보내세요
+                <span style="position:absolute;right:44px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <span style="width:64px;height:64px;flex:0 0 auto;border-radius:14px;overflow:hidden;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyMDAgMjAwJz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0nc2t5JyB4MT0nMCcgeTE9JzAnIHgyPScwJyB5Mj0nMSc+CjxzdG9wIG9mZnNldD0nMCUnIHN0b3AtY29sb3I9JyM4RkNCRUEnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyNEQ0VGRDgnLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgZmlsbD0ndXJsKCNza3kpJy8+CjxjaXJjbGUgY3g9JzE1MCcgY3k9JzQ1JyByPSczMCcgZmlsbD0nIzZGQUU1NScgb3BhY2l0eT0nMC41Jy8+CjxjaXJjbGUgY3g9JzE3NicgY3k9JzgwJyByPScyMicgZmlsbD0nIzVDOUE0OCcgb3BhY2l0eT0nMC40Jy8+CjxwYXRoIGQ9J00wIDE3OCBRNDAgMTU4IDkwIDE3NiBRMTQwIDE5NCAyMDAgMTcyIEwyMDAgMjAwIEwwIDIwMCBaJyBmaWxsPScjNkZBRTU1JyBvcGFjaXR5PScwLjUnLz4KPCEtLSBncmFuZG1hOiBib2R5IC0tPgo8cGF0aCBkPSdNMjAgMjAwIFEyMCAxNTAgNjUgMTUwIFExMTAgMTUwIDExMCAyMDAgWicgZmlsbD0nI0VFRENDNCcvPgo8IS0tIG5lY2sgLS0+CjxyZWN0IHg9JzU1JyB5PScxMTgnIHdpZHRoPScyMCcgaGVpZ2h0PScyMicgcng9JzYnIGZpbGw9JyNGM0QzQjAnLz4KPCEtLSBoZWFkIC0tPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzkwJyByPSczOCcgZmlsbD0nI0YzRDNCMCcvPgo8IS0tIGdyYXkgaGFpciBidW4vdG9wIC0tPgo8cGF0aCBkPSdNMjcgOTAgUTIyIDQwIDY1IDM4IFExMDggNDAgMTAzIDkwIFExMDMgNjIgNjUgNTggUTI3IDYyIDI3IDkwWicgZmlsbD0nI0Q5RDZEMicvPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzM0JyByPScxMycgZmlsbD0nI0Q5RDZEMicvPgo8IS0tIGdsYXNzZXMgLS0+CjxjaXJjbGUgY3g9JzUzJyBjeT0nOTAnIHI9JzEwJyBmaWxsPSdub25lJyBzdHJva2U9JyM1QzU2NTAnIHN0cm9rZS13aWR0aD0nMi40Jy8+CjxjaXJjbGUgY3g9Jzc5JyBjeT0nOTAnIHI9JzEwJyBmaWxsPSdub25lJyBzdHJva2U9JyM1QzU2NTAnIHN0cm9rZS13aWR0aD0nMi40Jy8+CjxsaW5lIHgxPSc2MycgeTE9JzkwJyB4Mj0nNjknIHkyPSc5MCcgc3Ryb2tlPScjNUM1NjUwJyBzdHJva2Utd2lkdGg9JzIuNCcvPgo8IS0tIHNtaWxlIC0tPgo8cGF0aCBkPSdNNTIgMTA2IFE2NSAxMTggNzggMTA2JyBzdHJva2U9JyNCNTc1NEEnIHN0cm9rZS13aWR0aD0nMi42JyBmaWxsPSdub25lJyBzdHJva2UtbGluZWNhcD0ncm91bmQnLz4KPCEtLSBibHVzaCAtLT4KPGNpcmNsZSBjeD0nNDInIGN5PScxMDAnIHI9JzUnIGZpbGw9JyNGMEFDOEYnIG9wYWNpdHk9JzAuNScvPgo8Y2lyY2xlIGN4PSc5MCcgY3k9JzEwMCcgcj0nNScgZmlsbD0nI0YwQUM4Ricgb3BhY2l0eT0nMC41Jy8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0MC4wLDE1MC4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYwLjcsMTM4LjUpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTkuMywxNDAuOCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MS41LDE2Ni4xKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIzLjksMTYzLjgpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDIuMywxMjcuMCkiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzMy4xLDE3My4wKSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTY1LjMsMTU5LjIpIj4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iIzhGQjhFMCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjOEZCOEUwIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iLTguMCIgY3k9IjAiIHJ4PSI4LjAiIHJ5PSI1LjAiIGZpbGw9IiM4RkI4RTAiLz4KICAgICAgICAgIDxjaXJjbGUgcj0iMi42IiBmaWxsPSIjRjRGMERDIi8+CiAgICAgICAgPC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTIuNCwxNTQuNikiPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItOC4wIiByeD0iNS4wIiByeT0iOC4wIiBmaWxsPSIjNkU5RkQ0Ii8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9IjAiIGN5PSI4LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiM2RTlGRDQiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSItOC4wIiBjeT0iMCIgcng9IjguMCIgcnk9IjUuMCIgZmlsbD0iIzZFOUZENCIvPgogICAgICAgICAgPGNpcmNsZSByPSIyLjYiIGZpbGw9IiNGNEYwREMiLz4KICAgICAgICA8L2c+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE0Ni45LDE0Ny43KSI+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii04LjAiIHJ4PSI1LjAiIHJ5PSI4LjAiIGZpbGw9IiNCQkQ2RUUiLz4KICAgICAgICAgIDxlbGxpcHNlIGN4PSI4LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjguMCIgcng9IjUuMCIgcnk9IjguMCIgZmlsbD0iI0JCRDZFRSIvPgogICAgICAgICAgPGVsbGlwc2UgY3g9Ii04LjAiIGN5PSIwIiByeD0iOC4wIiByeT0iNS4wIiBmaWxsPSIjQkJENkVFIi8+CiAgICAgICAgICA8Y2lyY2xlIHI9IjIuNiIgZmlsbD0iI0Y0RjBEQyIvPgogICAgICAgIDwvZz4KPC9zdmc+');background-size:cover;background-position:center"></span>
+              <div style="flex:1;min-width:0">
+                <p style="margin:0;font-size:21px;font-weight:700;color:#2b2a26">사진 1장 선택됨</p>
+                <p style="margin:2px 0 0;font-size:16px;color:#9A9A9A">사랑하는내강아지에게 보냅니다</p>
+              </div>
+              <button onClick="{{ onSend }}" style="position:relative;border:none;background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:16px 30px;border-radius:16px;cursor:pointer;flex:0 0 auto">전송
+                <span style="position:absolute;inset:-7px;border:3px solid #FF3B30;border-radius:22px;pointer-events:none"></span>
+                <span style="position:absolute;inset:-7px;border:3px solid #FF3B30;border-radius:22px;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+              </button>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 430, &quot;height&quot;: 900 },
+  &quot;startScreen&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;launcher&quot;, &quot;home&quot;, &quot;coach&quot;], &quot;default&quot;: &quot;launcher&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;미리보기&quot;, &quot;label&quot;: &quot;시작 화면&quot; },
+  &quot;typingSpeedMs&quot;: { &quot;editor&quot;: &quot;range&quot;, &quot;min&quot;: 30, &quot;max&quot;: 200, &quot;step&quot;: 5, &quot;default&quot;: 85, &quot;unit&quot;: &quot;ms&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;동작&quot;, &quot;label&quot;: &quot;타이핑 속도&quot; },
+  &quot;showStatusBar&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;표시&quot;, &quot;label&quot;: &quot;상단 상태바&quot; }
+}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const ss = (props && props.startScreen) || 'launcher';
+    this.state = { screen: ss, typed: '', listening: false, replied: false, step: ss === 'coach' ? 1 : 0 };
+    this.full = '손녀에게 카카오톡으로 사진 보내는 법을 알려줘';
+  }
+  onMic = () => {
+    if (this.state.listening) return;
+    const spd = (this.props && this.props.typingSpeedMs) || 85;
+    this.setState({ listening: true, typed: '', replied: false });
+    let i = 0;
+    clearInterval(this.timer);
+    this.timer = setInterval(() => {
+      i++;
+      this.setState({ typed: this.full.slice(0, i) });
+      if (i >= this.full.length) {
+        clearInterval(this.timer);
+        setTimeout(() => this.setState({ listening: false, replied: true }), 900);
+      }
+    }, spd);
+  };
+  go = (step) => this.setState({ step });
+  openAssistant = () => {
+    clearInterval(this.timer);
+    this.setState({ screen: 'home', typed: '', listening: false, replied: false, step: 0 });
+  };
+  openKakao = () => {
+    clearInterval(this.timer);
+    this.setState({ screen: 'coach', step: 1 });
+  };
+  backHome = () => {
+    clearInterval(this.timer);
+    this.setState({ screen: 'launcher', typed: '', listening: false, replied: false });
+  };
+  reset = () => {
+    clearInterval(this.timer);
+    this.setState({ screen: 'launcher', typed: '', listening: false, replied: false, step: 0 });
+  };
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const s = this.state;
+    return {
+      showStatusBar: this.props.showStatusBar !== false,
+      isLauncher: s.screen === 'launcher',
+      isHome: s.screen === 'home',
+      isCoach: s.screen === 'coach',
+      typed: s.typed,
+      caretOn: s.listening,
+      showUser: s.typed.length > 0,
+      showListen: s.listening,
+      showReply: s.replied,
+      showSuggestion: s.typed.length === 0 && !s.replied,
+      showProgress: s.screen === 'coach' && s.step >= 1 && s.step <= 4,
+      progressText: (s.step <= 4 ? s.step : 4) + '/4',
+      progressDots: [1, 2, 3, 4].map((n) => (s.step >= n ? '#F5C518' : '#E7E3D6')),
+      s1: s.step === 1, s5: s.step === 5,
+      sheetOpen: s.step === 2,
+      pickerOpen: s.step === 3,
+      showPreview: s.step === 4,
+      sent: s.step === 5,
+      onMic: this.onMic,
+      onOpenAssistant: this.openAssistant,
+      onOpenKakao: this.openKakao,
+      onBackHome: this.backHome,
+      onReset: this.reset,
+      onPlus: () => { if (this.state.step === 1) this.go(2); },
+      onAlbum: () => { if (this.state.step === 2) this.go(3); },
+      onPhoto: () => { if (this.state.step === 3) this.go(4); },
+      onSend: () => { if (this.state.step === 4) this.go(5); },
+    };
+  }
+}
+</script>
+</body>
+</html>
