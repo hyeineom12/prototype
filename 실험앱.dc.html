@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  a { color: #C9990A; text-decoration: none; }
+  a:hover { color: #A87E00; }
+  @keyframes ring-pulse {
+    0%   { transform: scale(.9);  opacity: .9; }
+    70%  { transform: scale(1.35); opacity: 0; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+  @keyframes caret-blink { 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
+  @keyframes dot-bounce { 0%,80%,100%{transform:translateY(0);opacity:.4;} 40%{transform:translateY(-4px);opacity:1;} }
+  @keyframes sheet-up { from{transform:translateY(100%);} to{transform:translateY(0);} }
+  @keyframes mark-pop { from{transform:translateY(6px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+  @keyframes mic-glow { 0%,100%{box-shadow:0 8px 22px rgba(226,178,10,.45);} 50%{box-shadow:0 8px 34px rgba(226,178,10,.75);} }
+  @keyframes mic-blur-pulse { 0%{transform:scale(.7);opacity:.95;} 60%{opacity:.55;} 100%{transform:scale(2.05);opacity:0;} }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+
+<div style="min-height:100dvh;background:#e7e4dc;display:flex;align-items:center;justify-content:center;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;color:#2b2a26">
+  <div style="position:relative;width:100%;max-width:430px;height:100dvh;max-height:932px;background:#FFFDF6;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(40,36,20,.22)">
+
+    <!-- status bar -->
+    <sc-if value="{{ showStatusBar }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 26px 4px;font-size:16px;font-weight:700;color:#2b2a26">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <span style="width:20px;height:12px;border:2px solid #2b2a26;border-radius:3px;display:inline-block;position:relative"></span>
+        </span>
+      </div>
+    </sc-if>
+
+    <!-- ================= LAUNCHER (phone home screen) ================= -->
+    <sc-if value="{{ isLauncher }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#F1F1F1;position:relative">
+        <div style="flex:1;min-height:0;padding:34px 26px 0;display:flex;gap:20px">
+          <button onClick="{{ onOpenAssistant }}" style="border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px">
+            <span style="width:118px;height:118px;border-radius:28px;background:#F5C518;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.1)">
+              <svg width="58" height="58" viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.6-7-9.4A4 4 0 0 1 12 7.6 4 4 0 0 1 19 10.6C19 15.4 12 20 12 20Z" fill="#ffffff"/></svg>
+            </span>
+            <span style="font-size:19px;font-weight:700;color:#2b2a26;letter-spacing:-.3px">실험 앱</span>
+          </button>
+          <button onClick="{{ onOpenKakao }}" style="position:relative;z-index:10;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px">
+            <span style="position:relative;width:118px;height:118px;border-radius:28px;background:#FEE500;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.1)">
+              <svg width="70" height="70" viewBox="0 0 100 100" fill="none">
+                <path d="M50 20C27.9 20 10 34.3 10 52c0 11.3 7.3 21.3 18.3 27L24 96l17.7-10.4c2.7.4 5.5.6 8.3.6 22.1 0 40-14.3 40-32S72.1 20 50 20Z" fill="#391B1B"/>
+                <text x="50" y="60" font-family="Arial,sans-serif" font-size="24" font-weight="800" fill="#FEE500" text-anchor="middle">TALK</text>
+              </svg>
+              <sc-if value="{{ showKakaoHint }}" hint-placeholder-val="{{ true }}">
+                <span style="position:absolute;inset:-25px;border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,.6);pointer-events:none"></span>
+                <span style="position:absolute;inset:-25px;border-radius:50%;border:5px solid #FF3B30;pointer-events:none;box-shadow:0 0 18px 4px rgba(255,59,48,.65)"></span>
+                <span style="position:absolute;inset:-25px;border-radius:50%;border:5px solid #FF3B30;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+              </sc-if>
+            </span>
+            <span style="position:relative;z-index:1;font-size:19px;font-weight:700;color:#2b2a26;letter-spacing:-.3px">카카오톡</span>
+          </button>
+        </div>
+        <div style="flex:0 0 auto;padding:10px 22px 18px;display:flex;align-items:center;justify-content:space-around">
+          <span style="width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+          </span>
+          <span style="width:20px;height:20px;border:2.5px solid #8A8A8A;border-radius:5px"></span>
+          <svg width="24" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8A8A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ================= HOME (voice assistant) ================= -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#ffffff">
+
+        <!-- header -->
+        <div style="flex:0 0 auto;padding:22px 24px 0;display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <p style="margin:0;font-size:18px;font-weight:600;color:#9A9488;letter-spacing:-.2px">AI 튜토리얼 도우미</p>
+            <p style="margin:6px 0 0;font-size:34px;font-weight:800;letter-spacing:-.6px;color:#2b2a26">어떻게 도와드릴까요?</p>
+          </div>
+          <span style="width:52px;height:52px;flex:0 0 auto;border-radius:50%;background:#FFF3CE;display:flex;align-items:center;justify-content:center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#C9990A" stroke-width="2"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" stroke="#C9990A" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+
+        <!-- conversation -->
+        <div style="flex:1;min-height:0;overflow-y:auto;padding:16px 24px;display:flex;flex-direction:column;gap:22px">
+          <!-- user (typed) -->
+          <sc-if value="{{ showUser }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:88%">
+              <div style="background:#F5C518;border-radius:22px;border-bottom-right-radius:8px;padding:22px 24px;box-shadow:0 8px 20px rgba(226,178,10,.28)">
+                <p style="margin:0;font-size:28px;font-weight:800;line-height:1.4;letter-spacing:-.4px;color:#2b2a26;text-wrap:pretty">{{ typed }}<sc-if value="{{ caretOn }}" hint-placeholder-val="{{ true }}"><span style="display:inline-block;width:3px;height:1.1em;background:#2b2a26;margin-left:2px;vertical-align:-3px;animation:caret-blink 1s step-end infinite"></span></sc-if></p>
+              </div>
+              <sc-if value="{{ showListen }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:8px;color:#8A857B;font-size:20px;font-weight:600;padding-right:6px">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="12" rx="3" fill="#8A857B"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4" stroke="#8A857B" stroke-width="2" stroke-linecap="round"/></svg>
+                  듣고 있어요
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- assistant reply -->
+          <sc-if value="{{ showReply }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-start;max-width:82%;background:#ffffff;border:2px solid #F2E4A6;border-radius:22px;border-top-left-radius:8px;padding:22px 24px;box-shadow:0 6px 18px rgba(160,130,20,.08);animation:mark-pop .3s ease both">
+              <p style="margin:0;font-size:28px;font-weight:800;line-height:1.4;letter-spacing:-.4px;text-wrap:pretty">알겠습니다! 안내를 시작하겠습니다.<br>먼저 카카오톡으로 이동해 주세요</p>
+            </div>
+          </sc-if>
+
+          <!-- suggestion -->
+          <sc-if value="{{ showSuggestion }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:16px;padding-bottom:6px">
+              <p style="margin:0;font-size:19px;font-weight:600;color:#9A9488">이런 것들을 물어볼 수 있어요</p>
+              <button onClick="{{ onMic }}" style="border:none;background:#FDF3D2;border-radius:20px;padding:18px 26px;cursor:pointer;max-width:82%">
+                <p style="margin:0;font-size:23px;font-weight:800;line-height:1.5;letter-spacing:-.3px;color:#2b2a26;text-align:center">진동에서 소리로<br>바꾸려면 어떻게 해야해</p>
+              </button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- mic footer -->
+        <div style="flex:0 0 auto;padding:10px 24px 34px;display:flex;flex-direction:column;align-items:center;gap:16px">
+          <div style="position:relative;width:104px;height:104px;display:flex;align-items:center;justify-content:center">
+            <span style="position:absolute;inset:-14px;border-radius:50%;background:#FFCF33;filter:blur(7px);animation:mic-blur-pulse 1.4s ease-out infinite;pointer-events:none"></span>
+            <span style="position:absolute;inset:-14px;border-radius:50%;background:#FFCF33;filter:blur(7px);animation:mic-blur-pulse 1.4s ease-out infinite .7s;pointer-events:none"></span>
+            <span style="position:absolute;inset:-14px;border-radius:50%;background:#FFCF33;filter:blur(7px);animation:mic-blur-pulse 1.4s ease-out infinite .35s;pointer-events:none"></span>
+            <button onClick="{{ onMic }}" style="position:relative;z-index:1;width:104px;height:104px;border:none;border-radius:50%;background:#F3A73E;display:flex;align-items:center;justify-content:center;cursor:pointer;animation:mic-glow 2.4s ease-in-out infinite" aria-label="말하기 버튼">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><rect x="9" y="2" width="6" height="12" rx="3" fill="#ffffff"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <p style="margin:0;font-size:20px;font-weight:700;color:#9A9488;letter-spacing:-.3px">아래 버튼을 누르고 말씀해 주세요</p>
+        </div>
+        <div style="flex:0 0 auto;padding:10px 22px 18px;display:flex;align-items:center;justify-content:space-around">
+          <span style="width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+          </span>
+          <span style="width:20px;height:20px;border:2.5px solid #8A8A8A;border-radius:5px"></span>
+          <button onClick="{{ onReset }}" style="position:relative;z-index:10;border:none;background:transparent;width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer" aria-label="뒤로가기 (앱 나가기)">
+            <svg width="24" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8A8A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <sc-if value="{{ showExitHint }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,.6);pointer-events:none"></span>
+              <span style="position:absolute;inset:0;border-radius:50%;border:4px solid #FF3B30;pointer-events:none;box-shadow:0 0 14px 3px rgba(255,59,48,.6)"></span>
+              <span style="position:absolute;inset:0;border-radius:50%;border:4px solid #FF3B30;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+            </sc-if>
+          </button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ================= CHATLIST (kakao chat room list) ================= -->
+    <sc-if value="{{ isChatlist }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#ffffff">
+        <div style="flex:0 0 auto;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ECECEC">
+          <button onClick="{{ onBackHome }}" style="border:none;background:transparent;padding:4px;margin-left:-4px;cursor:pointer;display:flex" aria-label="뒤로">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#2b2a26" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span style="font-size:23px;font-weight:800;letter-spacing:-.3px">채팅</span>
+        </div>
+        <div style="flex:0 0 auto;padding:16px 20px 4px;display:flex;justify-content:center">
+          <div style="background:#F5C518;color:#2b2a26;font-size:21px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);text-align:center;animation:mark-pop .3s ease both">채팅할 사람을 선택해주세요</div>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;padding:10px 8px">
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 12px;opacity:.5">
+            <span style="width:52px;height:52px;border-radius:50%;background:#D7C8A8;flex:0 0 auto"></span>
+            <span style="font-size:21px;font-weight:700;color:#2b2a26">엄혜인</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 12px;opacity:.5">
+            <span style="width:52px;height:52px;border-radius:50%;background:#B9CBD8;flex:0 0 auto"></span>
+            <span style="font-size:21px;font-weight:700;color:#2b2a26">김동건</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 12px;opacity:.5">
+            <span style="width:52px;height:52px;border-radius:50%;background:#D9B9B0;flex:0 0 auto"></span>
+            <span style="font-size:21px;font-weight:700;color:#2b2a26">이수현</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 12px;opacity:.5">
+            <span style="width:52px;height:52px;border-radius:50%;background:#C7D8B9;flex:0 0 auto"></span>
+            <span style="font-size:21px;font-weight:700;color:#2b2a26">정민</span>
+          </div>
+          <button onClick="{{ onOpenChat }}" style="width:100%;border:none;background:transparent;display:flex;align-items:center;gap:14px;padding:14px 12px;cursor:pointer;border-radius:14px;text-align:left">
+            <span style="width:52px;height:52px;border-radius:50%;background:#E4C99B;flex:0 0 auto"></span>
+            <span style="font-size:21px;font-weight:700;color:#2b2a26">사랑하는내강아지</span>
+          </button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ================= LOADING (chat room opening) ================= -->
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#ABC0D1">
+        <span style="width:56px;height:56px;border-radius:50%;border:6px solid rgba(255,255,255,.55);border-top-color:#ffffff;animation:spin .9s linear infinite;display:block"></span>
+        <p style="margin:0;font-size:20px;font-weight:700;color:#ffffff">불러오는 중...</p>
+      </div>
+    </sc-if>
+
+    <!-- ================= COACH (guided on KakaoTalk) ================= -->
+    <sc-if value="{{ isCoach }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0;position:relative">
+
+        <!-- top bar -->
+        <div style="flex:0 0 auto;background:#ffffff;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ECECEC;position:relative;z-index:5">
+          <span style="font-size:23px;font-weight:800;letter-spacing:-.3px">사랑하는내강아지</span>
+          <span style="margin-left:auto;display:flex;align-items:center;gap:16px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#4A4A4A" stroke-width="2"/><path d="M20 20l-4.3-4.3" stroke="#4A4A4A" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="#4A4A4A" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+
+        <!-- progress badge -->
+        <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;right:16px;top:64px;z-index:6;display:flex;align-items:center;gap:8px;background:#ffffff;padding:9px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.14)">
+            <span style="display:flex;align-items:center;gap:4px">
+              <sc-for list="{{ progressDots }}" as="dot" hint-placeholder-count="4">
+                <span style="width:7px;height:7px;border-radius:50%;background:{{ dot }};display:inline-block"></span>
+              </sc-for>
+            </span>
+            <span style="font-size:15px;font-weight:800;color:#8A857B;white-space:nowrap">{{ progressText }}</span>
+          </div>
+        </sc-if>
+
+        <!-- chat -->
+        <div data-chat-scroll="true" style="flex:1;min-height:0;overflow-y:auto;background:#ABC0D1;padding:20px 18px;display:flex;flex-direction:column;gap:10px">
+
+          <div style="align-self:center;background:rgba(0,0,0,.08);color:#5B6B75;font-size:14px;font-weight:600;padding:6px 14px;border-radius:999px;margin:4px 0">2026년 7월 1일 수요일</div>
+
+          <div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;max-width:86%">
+            <span style="width:38px;height:38px;border-radius:50%;background:#E4C99B;flex:0 0 auto"></span>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <span style="font-size:14px;color:#5B6B75;font-weight:600;padding-left:2px">사랑하는내강아지</span>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">할머니! 저 회사 합격했어요!</p>
+              </div>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">00기업이라는 곳이에요 할머니 아시나요?</p>
+              </div>
+              <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">곧 선물 사들고 찾아뵐게요!!</p>
+              </div>
+              <span style="font-size:13px;color:#8791A0;font-weight:600;padding-left:2px">오후 4:07</span>
+            </div>
+          </div>
+
+          <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:5px;max-width:70%">
+            <div style="background:#F5C518;border-radius:18px;border-bottom-right-radius:6px;padding:12px 16px">
+              <p style="margin:0;font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.2px;color:#2b2a26">그래. 수고했다 내강아지</p>
+            </div>
+            <span style="font-size:13px;color:#8791A0;font-weight:600">오후 5:08</span>
+          </div>
+          <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:5px;max-width:70%">
+            <div style="background:#F5C518;border-radius:18px;border-bottom-right-radius:6px;padding:12px 16px">
+              <p style="margin:0;font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.2px;color:#2b2a26">다음에도 연락다오^^</p>
+            </div>
+            <span style="font-size:13px;color:#8791A0;font-weight:600">오후 5:11</span>
+          </div>
+
+          <sc-if value="{{ showMsg1 }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:center;background:rgba(0,0,0,.08);color:#5B6B75;font-size:14px;font-weight:600;padding:6px 14px;border-radius:999px;margin:10px 0 4px;animation:mark-pop .3s ease both">2026년 7월 19일 일요일</div>
+
+            <div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;max-width:86%;animation:mark-pop .3s ease both">
+              <span style="width:38px;height:38px;border-radius:50%;background:#E4C99B;flex:0 0 auto"></span>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <span style="font-size:14px;color:#5B6B75;font-weight:600;padding-left:2px">사랑하는내강아지</span>
+                <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+                  <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">할머니~ 보고싶어요</p>
+                </div>
+                <sc-if value="{{ showMsg2 }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:#ffffff;border-radius:18px;border-bottom-left-radius:6px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06);animation:mark-pop .3s ease both">
+                    <p style="margin:0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.2px">요즘 뭐 하고 지내세요?</p>
+                  </div>
+                </sc-if>
+                <span style="font-size:13px;color:#8791A0;font-weight:600;padding-left:2px">오후 2:09</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- sent photo (step 5) -->
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:70%">
+              <div style="width:190px;height:150px;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.18)"><svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id='sky2' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#8FCBEA'/><stop offset='100%' stop-color='#DCEFD8'/></linearGradient></defs><rect width='200' height='200' fill='url(#sky2)'/><circle cx='150' cy='45' r='30' fill='#6FAE55' opacity='0.5'/><circle cx='176' cy='80' r='22' fill='#5C9A48' opacity='0.4'/><path d='M0 178 Q40 158 90 176 Q140 194 200 172 L200 200 L0 200 Z' fill='#6FAE55' opacity='0.5'/><path d='M20 200 Q20 150 65 150 Q110 150 110 200 Z' fill='#EEDCC4'/><rect x='55' y='118' width='20' height='22' rx='6' fill='#F3D3B0'/><circle cx='65' cy='90' r='38' fill='#F3D3B0'/><path d='M27 90 Q22 40 65 38 Q108 40 103 90 Q103 62 65 58 Q27 62 27 90Z' fill='#D9D6D2'/><circle cx='65' cy='34' r='13' fill='#D9D6D2'/><circle cx='53' cy='90' r='10' fill='none' stroke='#5C5650' stroke-width='2.4'/><circle cx='79' cy='90' r='10' fill='none' stroke='#5C5650' stroke-width='2.4'/><line x1='63' y1='90' x2='69' y2='90' stroke='#5C5650' stroke-width='2.4'/><path d='M52 106 Q65 118 78 106' stroke='#B5754A' stroke-width='2.6' fill='none' stroke-linecap='round'/><circle cx='42' cy='100' r='5' fill='#F0AC8F' opacity='0.5'/><circle cx='90' cy='100' r='5' fill='#F0AC8F' opacity='0.5'/><g transform="translate(140.0,150.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(160.7,138.5)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(119.3,140.8)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(151.5,166.1)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(123.9,163.8)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(142.3,127.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(133.1,173.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(165.3,159.2)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(112.4,154.6)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(146.9,147.7)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g></svg></div>
+              <span style="font-size:15px;color:#5B6B75;font-weight:600">오후 2:15 · 전송됨</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- ===== bottom overlays / input ===== -->
+
+        <!-- coachmark: step 1 (plus) -->
+        <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:16px;bottom:96px;z-index:30;animation:mark-pop .3s ease both">
+            <div style="background:#F5C518;color:#2b2a26;padding:14px 20px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);letter-spacing:-.3px">
+              <p style="margin:0;font-size:22px;font-weight:800;line-height:1.35">+모양 버튼을 눌러보세요</p>
+              <p style="margin:4px 0 0;font-size:17px;font-weight:600;color:#6E5A05">채팅창 왼쪽 아래에 있어요</p>
+              <span style="position:absolute;left:34px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- coachmark: step 5 (done) -->
+        <sc-if value="{{ s5 }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:26px;z-index:30;display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 20px;animation:mark-pop .3s ease both">
+            <div style="background:#2b2a26;color:#fff;font-size:23px;font-weight:800;padding:16px 24px;border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.28);text-align:center;letter-spacing:-.3px">잘하셨어요! 사진을 보냈어요</div>
+            <button onClick="{{ onRestart }}" style="border:none;background:#F5C518;color:#2b2a26;font-size:20px;font-weight:800;padding:14px 28px;border-radius:14px;cursor:pointer;box-shadow:0 6px 16px rgba(226,178,10,.35)">처음으로 돌아가기</button>
+          </div>
+        </sc-if>
+
+        <!-- input bar (steps 1 & 5) -->
+        <div style="position:relative;flex:0 0 auto;background:#ffffff;border-top:1px solid #ECECEC;padding:14px 16px 22px;display:flex;align-items:center;gap:12px">
+          <button onClick="{{ onPlus }}" style="position:relative;z-index:10;width:52px;height:52px;flex:0 0 auto;border:none;border-radius:50%;background:#F2F2F2;display:flex;align-items:center;justify-content:center;cursor:pointer" aria-label="첨부">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#555" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+              <span style="position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,.6);pointer-events:none"></span>
+              <span style="position:absolute;inset:-9px;border:4px solid #FF3B30;border-radius:50%;pointer-events:none;box-shadow:0 0 16px 4px rgba(255,59,48,.65)"></span>
+              <span style="position:absolute;inset:-9px;border:4px solid #FF3B30;border-radius:50%;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+            </sc-if>
+          </button>
+          <div style="flex:1;height:52px;border-radius:26px;background:#F2F2F2;display:flex;align-items:center;padding:0 20px;color:#9A9A9A;font-size:21px;font-weight:500">메시지 입력</div>
+          <span style="width:44px;height:44px;flex:0 0 auto;border-radius:50%;background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9A9A9A" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="#9A9A9A"/><circle cx="15" cy="10" r="1.3" fill="#9A9A9A"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+        <div style="flex:0 0 auto;padding:10px 22px 18px;display:flex;align-items:center;justify-content:space-around">
+          <span style="width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+            <span style="height:2.5px;background:#8A8A8A;border-radius:2px"></span>
+          </span>
+          <span style="width:20px;height:20px;border:2.5px solid #8A8A8A;border-radius:5px"></span>
+          <button onClick="{{ onCoachBack }}" style="border:none;background:transparent;padding:0;cursor:pointer;display:flex" aria-label="뒤로가기 (앱 나가기)">
+            <svg width="24" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8A8A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- attach sheet: step 2 -->
+        <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#ffffff;border-top-left-radius:24px;border-top-right-radius:24px;box-shadow:0 -12px 30px rgba(0,0,0,.18);padding:22px 20px 34px;animation:sheet-up .32s cubic-bezier(.2,.9,.3,1) both">
+            <div style="width:44px;height:5px;border-radius:3px;background:#E5E5E5;margin:0 auto 20px"></div>
+            <div style="position:absolute;left:0;right:0;top:-70px;z-index:25;display:flex;justify-content:center;animation:mark-pop .3s ease both">
+              <div style="background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);position:relative">앨범을 눌러주세요
+                <span style="position:absolute;left:50%;margin-left:-9px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:space-around">
+              <button onClick="{{ onAlbum }}" style="position:relative;flex:1;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;padding:8px">
+                <span style="position:relative;z-index:2;width:72px;height:72px;border-radius:20px;background:#FFF6D6;display:flex;align-items:center;justify-content:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#E2B20A" stroke-width="2"/><circle cx="8.5" cy="10" r="1.8" fill="#E2B20A"/><path d="M4 17l5-5 4 4 3-2 4 4" stroke="#E2B20A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span style="position:absolute;inset:-7px;border-radius:24px;box-shadow:0 0 0 9999px rgba(0,0,0,.6);pointer-events:none"></span>
+                  <span style="position:absolute;inset:-7px;border:4px solid #FF3B30;border-radius:24px;pointer-events:none;box-shadow:0 0 14px 3px rgba(255,59,48,.6)"></span>
+                  <span style="position:absolute;inset:-7px;border:4px solid #FF3B30;border-radius:24px;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+                </span>
+                <span style="font-size:20px;font-weight:700;color:#2b2a26">앨범</span>
+              </button>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px;opacity:.45">
+                <span style="width:72px;height:72px;border-radius:20px;background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="12" rx="3" stroke="#888" stroke-width="2"/><path d="M8 7l1.5-2.5h5L16 7" stroke="#888" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3" stroke="#888" stroke-width="2"/></svg>
+                </span>
+                <span style="font-size:20px;font-weight:700;color:#888">카메라</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px;opacity:.45">
+                <span style="width:72px;height:72px;border-radius:20px;background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M6 3h8l4 4v14H6z" stroke="#888" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="#888" stroke-width="2" stroke-linejoin="round"/></svg>
+                </span>
+                <span style="font-size:20px;font-weight:700;color:#888">파일</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- photo picker: step 3 -->
+        <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;top:0;z-index:20;background:#ffffff;display:flex;flex-direction:column;animation:sheet-up .32s cubic-bezier(.2,.9,.3,1) both">
+            <div style="flex:0 0 auto;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #EEE">
+              <button onClick="{{ onReset }}" style="border:none;background:transparent;padding:4px;cursor:pointer;display:flex" aria-label="닫기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#2b2a26" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </button>
+              <span style="font-size:22px;font-weight:800">최근 사진</span>
+            </div>
+            <div style="flex:0 0 auto;padding:16px 20px 0;display:flex;justify-content:center">
+              <div style="background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);position:relative;z-index:25;animation:mark-pop .3s ease both">보내고 싶은 사진을 눌러주세요
+                <span style="position:absolute;left:38px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+              </div>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:20px;display:flex;flex-wrap:wrap;gap:14px">
+              <span style="width:84px;height:84px;flex:0 0 auto;border-radius:12px;overflow:hidden;display:block"><svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id='leafbg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#EAF3E1'/><stop offset='100%' stop-color='#CDE4C2'/></linearGradient></defs><rect width='200' height='200' fill='url(#leafbg)'/><path d='M-10 40 Q40 10 90 30 Q40 20 10 70Z' fill='#6FAE55' opacity='0.5'/><path d='M210 60 Q160 20 120 50 Q170 40 190 90Z' fill='#5C9A48' opacity='0.45'/><g transform="translate(70.0,90.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(97.0,75.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#8FB8E0"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#8FB8E0"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#8FB8E0"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#8FB8E0"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(43.0,78.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#6E9FD4"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#6E9FD4"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#6E9FD4"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#6E9FD4"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(85.0,111.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(49.0,108.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#8FB8E0"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#8FB8E0"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#8FB8E0"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#8FB8E0"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(73.0,60.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#6E9FD4"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#6E9FD4"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#6E9FD4"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#6E9FD4"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(61.0,120.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(103.0,102.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#8FB8E0"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#8FB8E0"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#8FB8E0"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#8FB8E0"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(34.0,96.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#6E9FD4"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#6E9FD4"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#6E9FD4"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#6E9FD4"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(79.0,87.0)"><ellipse cx="0" cy="-10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><ellipse cx="0" cy="10.5" rx="6.5" ry="10.5" fill="#BBD6EE"/><ellipse cx="-10.5" cy="0" rx="10.5" ry="6.5" fill="#BBD6EE"/><circle r="3.4" fill="#F4F0DC"/></g><g transform="translate(140.0,120.0)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(163.4,107.0)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#8FB8E0"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#8FB8E0"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#8FB8E0"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#8FB8E0"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(116.6,109.6)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#6E9FD4"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#6E9FD4"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#6E9FD4"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#6E9FD4"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(153.0,138.2)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(121.8,135.6)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#8FB8E0"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#8FB8E0"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#8FB8E0"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#8FB8E0"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(142.6,94.0)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#6E9FD4"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#6E9FD4"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#6E9FD4"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#6E9FD4"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(132.2,146.0)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(168.6,130.4)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#8FB8E0"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#8FB8E0"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#8FB8E0"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#8FB8E0"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(108.8,125.2)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#6E9FD4"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#6E9FD4"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#6E9FD4"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#6E9FD4"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(147.8,117.4)"><ellipse cx="0" cy="-9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><ellipse cx="0" cy="9.1" rx="5.6" ry="9.1" fill="#BBD6EE"/><ellipse cx="-9.1" cy="0" rx="9.1" ry="5.6" fill="#BBD6EE"/><circle r="2.9" fill="#F4F0DC"/></g><g transform="translate(105.0,165.0)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(126.6,153.0)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#8FB8E0"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#8FB8E0"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#8FB8E0"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#8FB8E0"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(83.4,155.4)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#6E9FD4"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#6E9FD4"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#6E9FD4"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#6E9FD4"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(117.0,181.8)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(88.2,179.4)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#8FB8E0"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#8FB8E0"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#8FB8E0"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#8FB8E0"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(107.4,141.0)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#6E9FD4"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#6E9FD4"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#6E9FD4"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#6E9FD4"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(97.8,189.0)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(131.4,174.6)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#8FB8E0"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#8FB8E0"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#8FB8E0"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#8FB8E0"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(76.2,169.8)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#6E9FD4"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#6E9FD4"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#6E9FD4"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#6E9FD4"/><circle r="2.7" fill="#F4F0DC"/></g><g transform="translate(112.2,162.6)"><ellipse cx="0" cy="-8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><ellipse cx="0" cy="8.4" rx="5.2" ry="8.4" fill="#BBD6EE"/><ellipse cx="-8.4" cy="0" rx="8.4" ry="5.2" fill="#BBD6EE"/><circle r="2.7" fill="#F4F0DC"/></g></svg></span>
+              <span style="width:84px;height:84px;flex:0 0 auto;border-radius:12px;overflow:hidden;display:block"><svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id='skygrad' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#5FA9E8'/><stop offset='60%' stop-color='#9BCBEE'/><stop offset='100%' stop-color='#D9EEE0'/></linearGradient></defs><rect width='200' height='200' fill='url(#skygrad)'/><path d='M0 160 Q10 100 30 120 Q40 70 55 110 Q65 60 78 115 L78 200 L0 200Z' fill='#3F7A3B'/><path d='M120 200 Q130 130 148 150 Q158 90 172 140 Q182 100 196 150 L200 200Z' fill='#2F6B33'/><path d='M60 200 Q75 150 95 165 Q108 120 122 168 L130 200Z' fill='#4C8A44'/></svg></span>
+              <button onClick="{{ onPhoto }}" style="position:relative;z-index:2;width:84px;height:84px;flex:0 0 auto;border:none;border-radius:12px;overflow:hidden;cursor:pointer;padding:0"><svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id='sky2' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#8FCBEA'/><stop offset='100%' stop-color='#DCEFD8'/></linearGradient></defs><rect width='200' height='200' fill='url(#sky2)'/><circle cx='150' cy='45' r='30' fill='#6FAE55' opacity='0.5'/><circle cx='176' cy='80' r='22' fill='#5C9A48' opacity='0.4'/><path d='M0 178 Q40 158 90 176 Q140 194 200 172 L200 200 L0 200 Z' fill='#6FAE55' opacity='0.5'/><path d='M20 200 Q20 150 65 150 Q110 150 110 200 Z' fill='#EEDCC4'/><rect x='55' y='118' width='20' height='22' rx='6' fill='#F3D3B0'/><circle cx='65' cy='90' r='38' fill='#F3D3B0'/><path d='M27 90 Q22 40 65 38 Q108 40 103 90 Q103 62 65 58 Q27 62 27 90Z' fill='#D9D6D2'/><circle cx='65' cy='34' r='13' fill='#D9D6D2'/><circle cx='53' cy='90' r='10' fill='none' stroke='#5C5650' stroke-width='2.4'/><circle cx='79' cy='90' r='10' fill='none' stroke='#5C5650' stroke-width='2.4'/><line x1='63' y1='90' x2='69' y2='90' stroke='#5C5650' stroke-width='2.4'/><path d='M52 106 Q65 118 78 106' stroke='#B5754A' stroke-width='2.6' fill='none' stroke-linecap='round'/><circle cx='42' cy='100' r='5' fill='#F0AC8F' opacity='0.5'/><circle cx='90' cy='100' r='5' fill='#F0AC8F' opacity='0.5'/><g transform="translate(140.0,150.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(160.7,138.5)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(119.3,140.8)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(151.5,166.1)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(123.9,163.8)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(142.3,127.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(133.1,173.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(165.3,159.2)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(112.4,154.6)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(146.9,147.7)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g></svg></button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- send preview: step 4 -->
+        <sc-if value="{{ showPreview }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#ffffff;border-top:1px solid #ECECEC;padding:18px 18px 24px;box-shadow:0 -10px 26px rgba(0,0,0,.12);animation:sheet-up .3s ease both">
+            <div style="position:absolute;left:0;right:0;top:-70px;z-index:25;display:flex;justify-content:center;animation:mark-pop .3s ease both">
+              <div style="background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:14px 22px;border-radius:16px;box-shadow:0 8px 22px rgba(226,178,10,.4);position:relative">노란 버튼을 눌러 보내세요
+                <span style="position:absolute;right:44px;bottom:-9px;width:18px;height:18px;background:#F5C518;transform:rotate(45deg)"></span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <span style="width:64px;height:64px;flex:0 0 auto;border-radius:14px;overflow:hidden;display:block"><svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id='sky2' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#8FCBEA'/><stop offset='100%' stop-color='#DCEFD8'/></linearGradient></defs><rect width='200' height='200' fill='url(#sky2)'/><circle cx='150' cy='45' r='30' fill='#6FAE55' opacity='0.5'/><circle cx='176' cy='80' r='22' fill='#5C9A48' opacity='0.4'/><path d='M0 178 Q40 158 90 176 Q140 194 200 172 L200 200 L0 200 Z' fill='#6FAE55' opacity='0.5'/><path d='M20 200 Q20 150 65 150 Q110 150 110 200 Z' fill='#EEDCC4'/><rect x='55' y='118' width='20' height='22' rx='6' fill='#F3D3B0'/><circle cx='65' cy='90' r='38' fill='#F3D3B0'/><path d='M27 90 Q22 40 65 38 Q108 40 103 90 Q103 62 65 58 Q27 62 27 90Z' fill='#D9D6D2'/><circle cx='65' cy='34' r='13' fill='#D9D6D2'/><circle cx='53' cy='90' r='10' fill='none' stroke='#5C5650' stroke-width='2.4'/><circle cx='79' cy='90' r='10' fill='none' stroke='#5C5650' stroke-width='2.4'/><line x1='63' y1='90' x2='69' y2='90' stroke='#5C5650' stroke-width='2.4'/><path d='M52 106 Q65 118 78 106' stroke='#B5754A' stroke-width='2.6' fill='none' stroke-linecap='round'/><circle cx='42' cy='100' r='5' fill='#F0AC8F' opacity='0.5'/><circle cx='90' cy='100' r='5' fill='#F0AC8F' opacity='0.5'/><g transform="translate(140.0,150.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(160.7,138.5)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(119.3,140.8)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(151.5,166.1)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(123.9,163.8)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(142.3,127.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(133.1,173.0)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(165.3,159.2)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#8FB8E0"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#8FB8E0"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(112.4,154.6)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#6E9FD4"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#6E9FD4"/><circle r="2.6" fill="#F4F0DC"/></g><g transform="translate(146.9,147.7)"><ellipse cx="0" cy="-8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><ellipse cx="0" cy="8.0" rx="5.0" ry="8.0" fill="#BBD6EE"/><ellipse cx="-8.0" cy="0" rx="8.0" ry="5.0" fill="#BBD6EE"/><circle r="2.6" fill="#F4F0DC"/></g></svg></span>
+              <div style="flex:1;min-width:0">
+                <p style="margin:0;font-size:21px;font-weight:700;color:#2b2a26">사진 1장 선택됨</p>
+                <p style="margin:2px 0 0;font-size:16px;color:#9A9A9A">사랑하는내강아지에게 보냅니다</p>
+              </div>
+              <button onClick="{{ onSend }}" style="position:relative;z-index:2;border:none;background:#F5C518;color:#2b2a26;font-size:22px;font-weight:800;padding:16px 30px;border-radius:16px;cursor:pointer;flex:0 0 auto">전송
+                <span style="position:absolute;inset:-7px;border-radius:22px;box-shadow:0 0 0 9999px rgba(0,0,0,.6);pointer-events:none"></span>
+                <span style="position:absolute;inset:-7px;border:4px solid #FF3B30;border-radius:22px;pointer-events:none;box-shadow:0 0 14px 3px rgba(255,59,48,.6)"></span>
+                <span style="position:absolute;inset:-7px;border:4px solid #FF3B30;border-radius:22px;pointer-events:none;animation:ring-pulse 1.3s ease-out infinite"></span>
+              </button>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 430, &quot;height&quot;: 900 },
+  &quot;startScreen&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;coach&quot;, &quot;launcher&quot;, &quot;home&quot;, &quot;chatlist&quot;, &quot;loading&quot;], &quot;default&quot;: &quot;coach&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;미리보기&quot;, &quot;label&quot;: &quot;시작 화면&quot; },
+  &quot;typingSpeedMs&quot;: { &quot;editor&quot;: &quot;range&quot;, &quot;min&quot;: 30, &quot;max&quot;: 200, &quot;step&quot;: 5, &quot;default&quot;: 85, &quot;unit&quot;: &quot;ms&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;동작&quot;, &quot;label&quot;: &quot;타이핑 속도&quot; },
+  &quot;showStatusBar&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;표시&quot;, &quot;label&quot;: &quot;상단 상태바&quot; }
+}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const ss = (props && props.startScreen) || 'coach';
+    this.state = { screen: ss, typed: '', listening: false, replied: false, exitHintReady: false, visited: false, msgStage: 0, step: 0 };
+    this.segments = ['손녀에게', ' 카카오톡으로', ' 사진', ' 보내는 법을', ' 알려줘'];
+  }
+  onMic = () => {
+    if (this.state.listening) return;
+    const spd = (this.props && this.props.typingSpeedMs) || 130;
+    this.setState({ listening: true, typed: '', replied: false, exitHintReady: false });
+    clearTimeout(this.timer);
+    let acc = '';
+    let segIdx = 0;
+    let charIdx = 0;
+    const segments = this.segments;
+    const step = () => {
+      if (segIdx >= segments.length) {
+        this.timer = setTimeout(() => {
+          this.setState({ listening: false, replied: true });
+          this.timer = setTimeout(() => this.setState({ exitHintReady: true }), 2000);
+        }, 900);
+        return;
+      }
+      const seg = segments[segIdx];
+      if (charIdx < seg.length) {
+        acc += seg[charIdx];
+        charIdx++;
+        this.setState({ typed: acc });
+        this.timer = setTimeout(step, spd);
+      } else {
+        segIdx++;
+        charIdx = 0;
+        if (segIdx < segments.length) {
+          this.setState({ typed: acc + ' ···' });
+          this.timer = setTimeout(() => {
+            this.setState({ typed: acc });
+            this.timer = setTimeout(step, spd);
+          }, 650);
+        } else {
+          this.timer = setTimeout(step, spd);
+        }
+      }
+    };
+    step();
+  };
+  go = (step) => this.setState({ step });
+  openAssistant = () => {
+    clearTimeout(this.timer);
+    this.setState({ screen: 'home', typed: '', listening: false, replied: false, exitHintReady: false, step: 0 });
+  };
+  openKakao = () => {
+    clearTimeout(this.timer);
+    this.setState({ screen: 'chatlist', step: 0 });
+  };
+  openChat = () => {
+    clearTimeout(this.timer);
+    this.setState({ screen: 'loading' });
+    this.timer = setTimeout(() => this.setState({ screen: 'coach', step: 1 }), 2000);
+  };
+  backHome = () => {
+    clearTimeout(this.timer);
+    this.setState({ screen: 'launcher', typed: '', listening: false, replied: false });
+  };
+  reset = () => {
+    clearTimeout(this.timer);
+    this.setState({ screen: 'launcher', typed: '', listening: false, replied: false, exitHintReady: false, step: 0, visited: true });
+  };
+  restart = () => {
+    clearTimeout(this.timer);
+    this.setState({ screen: 'launcher', typed: '', listening: false, replied: false, exitHintReady: false, step: 0, visited: false });
+  };
+  scrollChatToBottom = () => {
+    if (typeof document === 'undefined') return;
+    const el = document.querySelector('[data-chat-scroll]');
+    if (el) el.scrollTop = el.scrollHeight;
+  };
+  componentDidMount() {
+    this.scrollChatToBottom();
+    this.msgTimer = setTimeout(() => {
+      this.setState({ msgStage: 1 });
+      this.msgTimer = setTimeout(() => this.setState({ msgStage: 2 }), 2000);
+    }, 3000);
+  }
+  componentDidUpdate() { this.scrollChatToBottom(); }
+  componentWillUnmount() { clearTimeout(this.timer); clearTimeout(this.msgTimer); }
+  renderVals() {
+    const s = this.state;
+    return {
+      showStatusBar: this.props.showStatusBar !== false,
+      isLauncher: s.screen === 'launcher',
+      isHome: s.screen === 'home',
+      isChatlist: s.screen === 'chatlist',
+      isLoading: s.screen === 'loading',
+      isCoach: s.screen === 'coach',
+      typed: s.typed,
+      caretOn: s.listening,
+      showUser: s.typed.length > 0,
+      showListen: s.listening,
+      showReply: s.replied,
+      showExitHint: s.exitHintReady,
+      showKakaoHint: s.screen === 'launcher' && s.visited,
+      showMsg1: s.msgStage >= 1,
+      showMsg2: s.msgStage >= 2,
+      showSuggestion: s.typed.length === 0 && !s.replied,
+      showProgress: s.screen === 'coach' && s.step >= 1 && s.step <= 4,
+      progressText: (s.step <= 4 ? s.step : 4) + '/4',
+      progressDots: [1, 2, 3, 4].map((n) => (s.step >= n ? '#F5C518' : '#E7E3D6')),
+      s1: s.step === 1, s5: s.step === 5,
+      sheetOpen: s.step === 2,
+      pickerOpen: s.step === 3,
+      showPreview: s.step === 4,
+      sent: s.step === 5,
+      onMic: this.onMic,
+      onOpenAssistant: this.openAssistant,
+      onOpenKakao: this.openKakao,
+      onOpenChat: this.openChat,
+      onBackHome: this.backHome,
+      onReset: this.reset,
+      onRestart: this.restart,
+      onCoachBack: s.step === 0 ? this.backHome : this.reset,
+      onPlus: () => { if (this.state.step === 1) this.go(2); },
+      onAlbum: () => { if (this.state.step === 2) this.go(3); },
+      onPhoto: () => { if (this.state.step === 3) this.go(4); },
+      onSend: () => { if (this.state.step === 4) this.go(5); },
+    };
+  }
+}
+</script>
+</body>
+</html>
