@@ -1,4 +1,4 @@
-# KFC_POC
+# FLY AI 9기 패기1팀 프로토타입
 
 SKT FLY AI 패기1팀 (KFC)
 
